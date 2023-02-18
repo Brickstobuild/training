@@ -2,10 +2,15 @@ package com.example.training2023.service;
 
 import com.example.training2023.model.Student;
 import com.example.training2023.repository.StudentRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +73,18 @@ public class StudentService
     public List<Student> getByName(String name)
     {
         return repo.findByName(name);
+
+    }
+
+    public void readFileContents(InputStream inputStream)throws Exception{
+        CSVParser parser=new CSVParser(new InputStreamReader(inputStream), CSVFormat.DEFAULT) ;
+        List<CSVRecord> records =parser.getRecords();
+        for (CSVRecord record:records){
+            Student student=new Student();
+            student.setRollno(Integer.parseInt(record.get(0)));
+            student.setName(record.get(1));
+            repo.save(student);
+        }
 
     }
 
